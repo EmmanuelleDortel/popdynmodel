@@ -18,9 +18,9 @@ mod_popdyn(
   timestep = 1,
   save_parameters = NULL,
   n_chain = 3,
-  n_iter = 10000,
-  n_thin = ceiling(n_iter/100),
-  n_burnin = floor(n_iter/4)
+  n_iter = 102000,
+  n_thin = 1000,
+  n_burnin = 2000
 )
 }
 \arguments{
@@ -42,7 +42,7 @@ mod_popdyn(
 
 \item{var_guild}{[optional, character] variable name(s) with taxa guilds identifiers. If supplied, estimates of guild occupancy changes rates are added to the model}
 
-\item{period}{[optional, numeric] list with start and end times for estimating intermediate average growth rates}
+\item{period}{[optional, numeric] list of vectors with start and end times for estimating intermediate average growth rates}
 
 \item{timestep}{[optional, numeric] interval between two consecutive times to account for regular gaps in time series in the rate estimates}
 
@@ -56,10 +56,12 @@ mod_popdyn(
 
 \item{n_burnin}{[optional, numeric] number of initial iterations to discard per Markov chain}
 }
-\details{
-\code{mod_popdyn} relies on Bayesian hierarchical state-space models that include two or three main components. The first component describes the occupancy dynamics of taxa from presence-absence data (defined from abundances if \code{var_cnt} is supplied or, failing that, from biomasses). The successive occupancy states of locations defined by \code{var_id} depend on taxon- and location-specific probabilities of persistence and colonisation. At the global level (i.e. across all locations) and at intermediate spatial levels defined by \code{var_reg}, the taxa occupancy changes rates are estimated from the ratio of the number of occuped location from one time to the next. Their geometric mean is used as average occupancy rate over the whole time modelling period and over intermediate time periods defined by \code{period}. If \code{var_guild} is supplied, the guild occupancy change rates are assessed from the geometric means of taxa occupancy rates.
+\details{ 
+\code{mod_popdyn} relies on Bayesian hierarchical state-space models that include two or three main components. The first component describes the occupancy dynamics of one or more taxa from presence-absence data (defined from \code{var_cnt} if is supplied or, failing that, from \code{var_wei}). The successive occupancy states of locations defined by \code{var_id} depend on taxon- and location-specific probabilities of persistence and colonisation. At the global level (i.e. across all locations) and at intermediate spatial levels defined by \code{var_reg}, the taxa occupancy changes rates are estimated from the ratio of the number of occuped locations from one time to the next. Their product and their geometric mean are respectively used as estimates of occupancy change rate and average occupancy change rate over the whole time modelling period and over intermediate time periods defined by \code{period}. 
 
-The other two components describe the population growth of taxa on successively occupied locations, one based on abundance (if \code{var_cnt} is supplied) and other based on biomass (if \code{var_wei} is supplied). These two components are based on an autoregressive growth model. At location, global (i.e. across all locations) and intermediate spatial levels defined by \code{var_reg}, the finite population growth rates are estimated as the changes in population size from one time to the next. Their geometric means are used as average growth rates over the whole time modelling period and over intermediate time periods defined by \code{period}. If \code{var_guild} is supplied, the guild occupancy growth rates are assessed from the geometric means of taxa growth rates.
+Two other independent components describe the population growth of taxa on successively occupied location, from on headcounts (if \code{var_cnt} is supplied) and/or biomass (if \code{var_wei} is supplied). At location level, global level (i.e. across all locations) and regional levels defined by \code{var_reg}, the finite population growth rates are estimated as the changes in population size from one time to the next. The products and the geometric means of the finite population growth rates are respectively used as estimates of growth rates and average growth rates over the whole time modelling period and over intermediate time periods defined by \code{period}.
+
+If \code{var_guild} is supplied, the occupancy change rates and growth rates of taxa guilds are assessed from the geometric means of taxa rates.
 
 The models are run using the \code{runMCMC} function of \code{nimble} package.
 }
@@ -74,7 +76,6 @@ Fits Bayesian hierarchical single or multi-taxa occupancy and growth models to a
 }
 \examples{
 \dontrun{
-data(riverfish)
 df <- riverfish[riverfish$pass == 1,]
 
 # Multi-taxa occupancy and population growth from abundance

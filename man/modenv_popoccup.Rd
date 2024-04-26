@@ -19,9 +19,9 @@ modenv_popoccup(
   timestep = 1,
   save_parameters = NULL,
   n_chain = 3,
-  n_iter = 10000,
-  n_thin = ceiling(n_iter/100),
-  n_burnin = floor(n_iter/4)
+  n_iter = 102000,
+  n_thin = 1000,
+  n_burnin = 2000
 )
 }
 \arguments{
@@ -45,7 +45,7 @@ modenv_popoccup(
 
 \item{var_guild}{[optional, character] variable name(s) with taxa guilds identifiers. If supplied, estimates of guild occupancy changes rates are added to the model}
 
-\item{period}{[optional, numeric] list with start and end times for estimating intermediate average growth rates}
+\item{period}{[optional, numeric] list of vectors with start and end times for estimating intermediate average growth rates}
 
 \item{timestep}{[optional, numeric] interval between two consecutive times to account for regular gaps in time series in the rate estimates}
 
@@ -60,7 +60,7 @@ modenv_popoccup(
 \item{n_burnin}{[optional, numeric] number of initial iterations to discard per Markov chain}
 }
 \details{
-\code{modenv_popoccup} relies on Bayesian hierarchical state-space models that describe the occupancy dynamics of one or more taxa from presence-absence data. The successive occupancy states of locations defined by \code{var_id} depend on taxon-specific responses to environmental covariates. At the global level (i.e. across all locations) and at intermediate spatial levels defined by \code{var_reg}, the taxa occupancy changes rates are estimated from the ratio of the number of occuped location from one time to the next. Their geometric mean is used as average occupancy rate over the whole time modelling period and over intermediate time periods defined by \code{period}. If \code{var_guild} is supplied, the guild occupancy change rates are assessed from the geometric means of taxa occupancy rates.
+\code{modenv_popoccup} relies on Bayesian hierarchical state-space models that describe the occupancy dynamics of one or more taxa from presence-absence data. The successive occupancy states of locations defined by \code{var_id} depend on taxon-specific responses to environmental covariates. At the global level (i.e. across all locations) and at intermediate spatial levels defined by \code{var_reg}, the taxa occupancy changes rates are estimated from the ratio of the number of occuped location from one time to the next. Their product and their geometric mean are respectively used as estimates of occupancy change rate and average occupancy change rate over the whole time modelling period and over intermediate time periods defined by \code{period}. If \code{var_guild} is supplied, the guild occupancy change rates are also assessed from the geometric mean of taxa occupancy change rates. 
 
 If \code{var_envO} is supplied, the occupancy states of the locations are modelled from the linear effect of environmental covariates on occupancy probabilities.
 
@@ -83,7 +83,6 @@ Fits Bayesian hierarchical occupancy models to presence-absence time series for 
 }
 \examples{
 \dontrun{
-data(riverfish)
 df <- riverfish[riverfish$pass == 1,]
 
 # Occupancy dynamics of eel with linear environmental effects on occupancy probability

@@ -19,9 +19,9 @@ mod_popgrowAlt(
   timestep = 1,
   save_parameters = NULL,
   n_chain = 3,
-  n_iter = 10000,
-  n_thin = ceiling(n_iter/100),
-  n_burnin = floor(n_iter/4)
+  n_iter = 102000,
+  n_thin = 1000,
+  n_burnin = 2000
 )
 }
 \arguments{
@@ -45,7 +45,7 @@ mod_popgrowAlt(
 
 \item{var_guild}{[optional, character] variable name(s) with taxa guilds identifiers. If supplied, estimates of guild occupancy changes rates are added to the model}
 
-\item{period}{[optional, numeric] list with start and end times for estimating intermediate average growth rates}
+\item{period}{[optional, numeric] list of vectors with start and end times for estimating intermediate average growth rates}
 
 \item{timestep}{[optional, numeric] interval between two consecutive times to account for regular gaps in time series in the rate estimates}
 
@@ -60,7 +60,7 @@ mod_popgrowAlt(
 \item{n_burnin}{[optional, numeric] number of initial iterations to discard per Markov chain}
 }
 \details{
-\code{mod_popgrowAlt} relies on Bayesian hierarchical state-space models that include two or three main components. The first component describes the occupancy dynamics of taxa at locations defined by \code{var_id} from taxon- and location-specific probabilities of persistence and colonisation. Two other independent components describe the population growth of taxa on successively occupied locations, one based on abundance (if \code{var_cnt} is supplied) and other based on biomass (if \code{var_wei} is supplied). These two components are based on an autoregressive growth model. At the location level, the finite population growth rates are estimated as the changes in population size from one time to the next only if the same sampling protocol is carried out from one time to the next. At global (i.e. across all locations) and intermediate spatial levels defined by \code{var_reg}, the finite population growth rates are derived from the size-weighted average of the finite growth rates estimated at the location level. The geometric means of finite population growth rates are used as average growth rates over the whole time modelling period and over intermediate time periods defined by \code{period}. If \code{var_guild} is supplied, the guild occupancy growth rates are assessed from the geometric means of taxa growth rates.*
+\code{mod_popgrowAlt} relies on Bayesian hierarchical state-space models that include two or three main components. The first component describes the occupancy dynamics of taxa at locations defined by \code{var_id} from taxon- and location-specific probabilities of persistence and colonisation. Two other independent components describe the population growth of taxa on successively occupied locations, one based on abundance (if \code{var_cnt} is supplied) and other based on biomass (if \code{var_wei} is supplied). These two components are based on an autoregressive growth model. At the location level, the finite population growth rates are only estimated when the same sampling protocol is carried out from one time to the next from the changes in population size. At global level (i.e. across all locations) and regional levels defined by \code{var_reg}, the finite population growth rates are derived from the size-weighted average of the finite growth rates estimated at the location level. The products and the geometric means of the finite population growth rates are respectively used as estimates of growth rates and average growth rates over the whole time modelling period and over intermediate time periods defined by \code{period}. If \code{var_guild} is supplied, the guild growth rates are assessed from the geometric mean of taxa growth rates.  
 
 The models are run using the \code{runMCMC} function of \code{nimble} package.
 }
@@ -71,11 +71,10 @@ The models are run using the \code{runMCMC} function of \code{nimble} package.
 \code{\link{mod_popgrow}} and \code{\link{get_modparameters}}
 }
 \description{
-Fits Bayesian hierarchical single or multi-species population growth models to abundance and/or biomass time series. The modelling framework not accounts for detection biases of taxa and individuals.
+Fits Bayesian hierarchical single or multi-species population growth models to abundance and/or biomass time series. The modelling framework not accounts for detection biases of taxa and individuals but allows changes in the sampling protocol to be considered.
 }
 \examples{
 \dontrun{
-data(riverfish)
 df <- riverfish[riverfish$pass == 1,]
 
 # Pike population growth from abundance

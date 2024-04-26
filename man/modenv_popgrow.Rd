@@ -19,9 +19,9 @@ modenv_popgrow(
   timestep = 1,
   save_parameters = NULL,
   n_chain = 3,
-  n_iter = 10000,
-  n_thin = ceiling(n_iter/100),
-  n_burnin = floor(n_iter/4)
+  n_iter = 102000,
+  n_thin = 1000,
+  n_burnin = 2000
 )
 }
 \arguments{
@@ -45,7 +45,7 @@ modenv_popgrow(
 
 \item{var_guild}{[optional, character] variable name(s) with taxa guilds identifiers. If supplied, estimates of guild occupancy changes rates are added to the model}
 
-\item{period}{[optional, numeric] list with start and end times for estimating intermediate average growth rates}
+\item{period}{[optional, numeric] list of vectors with start and end times for estimating intermediate average growth rates}
 
 \item{timestep}{[optional, numeric] interval between two consecutive times to account for regular gaps in time series in the rate estimates}
 
@@ -60,7 +60,7 @@ modenv_popgrow(
 \item{n_burnin}{[optional, numeric] number of initial iterations to discard per Markov chain}
 }
 \details{
-\code{modenv_popgrow} relies on Bayesian hierarchical state-space models that include two or three main components. The first component describes the occupancy dynamics of taxa at locations defined by \code{var_id} from taxon- and location-specific probabilities of persistence and colonisation. Two other independent components describe the population growth of taxa on successively occupied locations, one based on abundance (if \code{var_cnt} is supplied) and other based on biomass (if \code{var_wei} is supplied). These two components are based on an autoregressive formulation in which growth rates are modelled as a linear function of environmental covariates. At location, global (i.e. across all locations) and intermediate spatial levels defined by \code{var_reg}, the finite population growth rates are estimated as the changes in population size from one time to the next. Their geometric means are used as average growth rates over the whole time modelling period and over intermediate time periods defined by \code{period}. If \code{var_guild} is supplied, the guild occupancy growth rates are assessed from the geometric means of taxa growth rates.
+\code{modenv_popgrow} relies on Bayesian hierarchical state-space models that include two or three main components. The first component describes the occupancy dynamics of taxa at locations defined by \code{var_id} from taxon- and location-specific probabilities of persistence and colonisation. Two other independent components describe the population growth of taxa on successively occupied locations, one based on abundance (if \code{var_cnt} is supplied) and other based on biomass (if \code{var_wei} is supplied). These two components are based on an autoregressive formulation in which the finite growth rates at location level are modelled as a linear function of environmental covariates. At global level (i.e. across all locations) and regional levels defined by \code{var_reg}, the finite population growth rates are estimated as the changes in population size from one time to the next. At any spatial level, the products and the geometric means of the finite population growth rates are respectively used as estimates of growth rates and average growth rates over the whole time modelling period and over intermediate time periods defined by \code{period}. If \code{var_guild} is supplied, the guild growth rates are assessed from the geometric mean of taxa growth rates.  
 
 The models are run using the \code{runMCMC} function of \code{nimble} package.
 }
@@ -75,7 +75,6 @@ Fits Bayesian hierarchical single or multi-species population growth models with
 }
 \examples{
 \dontrun{
-data(riverfish)
 df <- riverfish[riverfish$pass == 1,]
 
 # Multi-taxa population growth from abundance with linear temperature effect on growth rates
