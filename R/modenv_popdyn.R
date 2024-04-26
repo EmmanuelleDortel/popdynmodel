@@ -31,7 +31,6 @@
 #'
 #' @examples
 #' \dontrun{
-#' data(riverfish)
 #' df <- riverfish[riverfish$pass == 1,]
 #' mcmc.out <- modenv_popdyn(df[df$taxa == "pike",],
 #' var_id = "pop_id",var_tmp = "year",
@@ -48,7 +47,7 @@
 #' var_surf = "surface",
 #' n_chain=3,n_iter=10,n_thin=1,n_burnin=0)
 #' }
-modenv_popdyn <- function(df, var_id, var_tmp, var_tax=NULL, var_cnt=NULL, var_wei=NULL, var_env=NULL, var_envO=NULL, var_envP=NULL, var_envC=NULL, var_surf=NULL, var_reg=NULL, var_guild=NULL, period=NULL, timestep=1, save_parameters = NULL, n_chain = 3, n_iter = 10000, n_thin = ceiling(n_iter/100), n_burnin = floor(n_iter/4)) {
+modenv_popdyn <- function(df, var_id, var_tmp, var_tax=NULL, var_cnt=NULL, var_wei=NULL, var_env=NULL, var_envO=NULL, var_envP=NULL, var_envC=NULL, var_surf=NULL, var_reg=NULL, var_guild=NULL, period=NULL, timestep=1, save_parameters = NULL, n_chain = 3, n_iter = 102000, n_thin = 1000, n_burnin = 2000) {
   #-----------------------------------------------------------------------------
   # Check for missing required arguments
   check_required(var_id)

@@ -25,7 +25,6 @@
 #'
 #' @examples
 #' \dontrun{
-#' data(riverfish)
 #' df <- riverfish[riverfish$pass == 1,]
 #' mcmc.out <- mod_popoccup(df[df$taxa == "eel",],
 #' var_id = "pop_id",
@@ -50,7 +49,7 @@
 #' period = list(c(2010,2016),c(2016,2022)),
 #' n_chain=2,n_iter=10,n_thin=1,n_burnin=0)
 #' }
-mod_popoccup <- function(df, var_id, var_tmp, var_cnt, var_tax=NULL, var_reg=NULL, var_guild=NULL, period=NULL, timestep=1, save_parameters=NULL, n_chain=3, n_iter=10000, n_thin=ceiling(n_iter/100), n_burnin=floor(n_iter/4)) {
+mod_popoccup <- function(df, var_id, var_tmp, var_cnt, var_tax=NULL, var_reg=NULL, var_guild=NULL, period=NULL, timestep=1, save_parameters=NULL, n_chain=3, n_iter=102000, n_thin=1000, n_burnin=2000) {
   #-----------------------------------------------------------------------------
   # Check for missing required arguments
   check_required(var_id)

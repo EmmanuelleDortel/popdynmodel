@@ -78,9 +78,10 @@ int_datamodel <- function(df, occup, grow, modenv, modenvG, alt, timestep, perio
     ndate <- c(ntime - 1,NA)
     nperiod <- 1
   } else {
-    nperiod <- 1 + length(period)
-    start <- c(2,mapply(function(i) which(time %in% (period[[i]][1] + timestep)), 1:length(period), SIMPLIFY = "vector"))
-    end <- c(ntime,mapply(function(i) which(time %in% period[[i]][2]), 1:length(period), SIMPLIFY = "vector"))
+    addperiod <- c(list(c(min(time),max(time))),period)
+    nperiod <- length(addperiod)
+    start <- mapply(function(i) which(time %in% addperiod[[i]][1]) + timestep, 1:nperiod, SIMPLIFY = "vector")
+    end <- mapply(function(i) which(time %in% addperiod[[i]][2]), 1:nperiod, SIMPLIFY = "vector")
     ndate <- mapply(function(i) end[i] - start[i], 1:nperiod,  SIMPLIFY = "vector")
   }
   popdyn_const <- c(popdyn_const, list(nperiod = nperiod, start = start, end = end))
@@ -119,10 +120,10 @@ int_datamodel <- function(df, occup, grow, modenv, modenvG, alt, timestep, perio
   popdyn_inits <- list(p.per = rep(0.5, ntax), p.col = rep(0.5, ntax), epsilon_per = nimMatrix(0, ntax, length(id)), epsilon_col = nimMatrix(0, ntax, length(id)))
   popdyn_parameters <- c("z","p.per","p.col","p.per_id","p.col_id")
   if (isTRUE(occup)) {
-    popdyn_parameters <- c(popdyn_parameters, "p.ext_id","p.ext","z_mulambda","OR","turnover")
+    popdyn_parameters <- c(popdyn_parameters, "p.ext_id","p.ext","z_mulambda","muOR","z_lambda","OR","z_intlambda","turnover")
     popdyn_const <- c(popdyn_const, list(ndate = ndate))
     if (FALSE %in% quo_is_null(var_guild)) {
-      popdyn_parameters <- c(popdyn_parameters,"z_lambda_gui","z_mulambda_gui","GOR")
+      popdyn_parameters <- c(popdyn_parameters,"z_intlambda_gui","z_lambda_gui","z_mulambda_gui","GOR","muGOR")
     }
     if (isTRUE(modenv)) {
       popdyn_parameters <- popdyn_parameters[!popdyn_parameters %in% c("p.col","p.per","p.ext","p.col_id","p.per_id","p.ext_id")]
@@ -201,7 +202,7 @@ int_datamodel <- function(df, occup, grow, modenv, modenvG, alt, timestep, perio
       y <- replace(y, which(y == 0), 1)
       C <- log(replace(y, is.na(y), 1))
       popdyn_data <- c(popdyn_data, list(y = y))
-      popdyn_parameters <- c(popdyn_parameters, "N_PGR","N_mulambda","N_lambda","N_mulambda_id","N_lambda_id","N")
+      popdyn_parameters <- c(popdyn_parameters, "N_PGR","N_muPGR","N_mulambda","N_lambda","N_intlambda","N_mulambda_id","N_lambda_id","N_intlambda_id","N")
       if (isTRUE(modenvG)) {
         popdyn_inits <- c(popdyn_inits, list(C = C, alpha_N = rep(0, ntax), beta_N = nimMatrix(1, ntax, ngvar), tauN = nimMatrix(1, ntax, length(id))))
         popdyn_parameters <- c(popdyn_parameters, "alpha_N","beta_N")
@@ -209,7 +210,7 @@ int_datamodel <- function(df, occup, grow, modenv, modenvG, alt, timestep, perio
         popdyn_inits <- c(popdyn_inits, list(C = C, muN = nimMatrix(1, ntax, length(id)), tauN = nimMatrix(1, ntax, length(id))))
       }
       if (FALSE %in% quo_is_null(var_guild)) {
-        popdyn_parameters <- c(popdyn_parameters, "N_lambda_gui","N_mulambda_gui","N_GGR")
+        popdyn_parameters <- c(popdyn_parameters, "N_lambda_gui","N_mulambda_gui","N_intlambda_gui","N_GGR","N_muGGR")
       }
     }
     #-----------------------------------------------------------------------------
@@ -218,7 +219,7 @@ int_datamodel <- function(df, occup, grow, modenv, modenvG, alt, timestep, perio
       w <- replace(w, which(w == 0), 1)
       W <- log(replace(w, is.na(w), 1))
       popdyn_data <- c(popdyn_data, list(w = w))
-      popdyn_parameters <- c(popdyn_parameters, "B_PGR","B_mulambda","B_lambda","B_mulambda_id","B_lambda_id","B")
+      popdyn_parameters <- c(popdyn_parameters, "B_PGR","B_muPGR","B_mulambda","B_lambda","B_intlambda","B_mulambda_id","B_lambda_id","B_intlambda_id","B")
       if (isTRUE(modenvG)) {
         popdyn_inits <- c(popdyn_inits, list(W = W, alpha_B = rep(0, ntax), beta_B = nimMatrix(1, ntax, ngvar), tauB = nimMatrix(1, ntax, length(id))))
         popdyn_parameters <- c(popdyn_parameters, "alpha_B","beta_B")
@@ -226,7 +227,7 @@ int_datamodel <- function(df, occup, grow, modenv, modenvG, alt, timestep, perio
         popdyn_inits <- c(popdyn_inits, list(W = W, muB = nimMatrix(1, ntax, length(id)), tauB = nimMatrix(1, ntax, length(id))))
       }
       if (FALSE %in% quo_is_null(var_guild)) {
-        popdyn_parameters <- c(popdyn_parameters, "B_lambda_gui","B_mulambda_gui","B_GGR")
+        popdyn_parameters <- c(popdyn_parameters, "B_lambda_gui","B_mulambda_gui","B_intlambda_gui","B_GGR","B_muGGR")
       }
     }
   }

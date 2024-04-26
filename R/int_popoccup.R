@@ -17,20 +17,22 @@ int_popoccup <- function(occup,modenv,var_envO,var_envP,var_envC,var_guild) {
   code <- NULL
   if (isTRUE(occup)) {
     #-----------------------------------------------------------------------------
-    # Occupancy rates at regional levels
+    # Occupancy rates at regional levels (taxa)
     occupancy_regional <- nimbleCode(
       for(s in 1:ntax) {
         for (j in 1:nreg[s]) {
           for (t in 1:nperiod) {
             nz_reg[s,reg[s,j],t] <- max(z_reg[s,reg[s,j],start[t]:end[t]])
-            z_mulambda[s,reg[s,j],t] <- nz_reg[s,reg[s,j],t] * prod(z_lambda[s,reg[s,j],start[t]:end[t]])^(1 / (step * ndate[t]))
-            OR[s,reg[s,j],t] <- nz_reg[s,reg[s,j],t] * 100 * (z_mulambda[s,reg[s,j],t] - 1)
+            z_lambda[s,reg[s,j],t] <- nz_reg[s,reg[s,j],t] * prod(cal.z_lambda[s,reg[s,j],start[t]:end[t]])
+            OR[s,reg[s,j],t] <- nz_reg[s,reg[s,j],t] * 100 * (z_lambda[s,reg[s,j],t] - 1)
+            z_mulambda[s,reg[s,j],t] <- z_lambda[s,reg[s,j],t]^(1 / (step * ndate[t]))
+            muOR[s,reg[s,j],t] <- nz_reg[s,reg[s,j],t] * 100 * (z_mulambda[s,reg[s,j],t] - 1)
           }
           for (t in 2:ntime) {
             z_reg[s,reg[s,j],t] <- max(z_cal[s,reg[s,j],1:nidreg[s,j],t])
             nb_z[s,reg[s,j],t] <- sum(z_cal[s,reg[s,j],1:nidreg[s,j],t])
-            z_lambda[s,reg[s,j],t] <- nb_z[s,reg[s,j],t] / max(1,nb_z[s,reg[s,j],t-1])
-            cal.z_lambda[s,reg[s,j],t] <- z_reg[s,reg[s,j],t] * z_lambda[s,reg[s,j],t] + (1 - z_reg[s,reg[s,j],t])
+            z_intlambda[s,reg[s,j],t] <- nb_z[s,reg[s,j],t] / max(1,nb_z[s,reg[s,j],t-1])
+            cal.z_lambda[s,reg[s,j],t] <- z_reg[s,reg[s,j],t] * z_intlambda[s,reg[s,j],t] + (1 - z_reg[s,reg[s,j],t])
             turnover[s,reg[s,j],t] <- sum(turn_cal[s,reg[s,j],1:nidreg[s,j],t]) / max(1,nb_z[s,reg[s,j],t])
             for (i in 1:nidreg[s,j]) {
               turn_cal[s,reg[s,j],i,t] <- z[s,idreg[j,i,s],t] * (1 - z[s,idreg[j,i,s],t-1])
@@ -53,16 +55,18 @@ int_popoccup <- function(occup,modenv,var_envO,var_envP,var_envC,var_guild) {
           for (j in 1:nregui[g]) {
             for (t in 1:nperiod) {
               z_guireg[g,regui[g,j],t] <- max(z_gui[g,regui[g,j],start[t]:end[t]])
-              z_mulambda_gui[g,regui[g,j],t] <- z_guireg[g,regui[g,j],t] * prod(z_lambda_gui[g,regui[g,j],start[t]:end[t]])^(1 / (step * ndate[t]))
-              GOR[g,regui[g,j],t] <- z_guireg[g,regui[g,j],t] * 100 * (z_mulambda_gui[g,regui[g,j],t] - 1)
+              z_lambda_gui[g,regui[g,j],t] <- z_guireg[g,regui[g,j],t] * prod(cal.z_lambda_gui[g,regui[g,j],start[t]:end[t]])
+              GOR[g,regui[g,j],t] <- z_guireg[g,regui[g,j],t] * 100 * (z_lambda_gui[g,regui[g,j],t] - 1)
+              z_mulambda_gui[g,regui[g,j],t] <- z_lambda_gui[g,regui[g,j],t]^(1 / (step * ndate[t]))
+              muGOR[g,regui[g,j],t] <- z_guireg[g,regui[g,j],t] * 100 * (z_mulambda_gui[g,regui[g,j],t] - 1)
             }
             for (t in 2:ntime) {
-              z_lambda_gui[g,regui[g,j],t] <- prod(z_lambda_tax[g,1:ngtax[g,j],regui[g,j],t])^(1/ngtax[g,j])
+              z_intlambda_gui[g,regui[g,j],t] <- prod(z_lambda_tax[g,1:ngtax[g,j],regui[g,j],t])^(1/ngtax[g,j])
               z_gui[g,regui[g,j],t] <- max(z_reg_tax[g,1:ngtax[g,j],regui[g,j],t])
-              cal.z_lambda_gui[g,regui[g,j],t] <- z_gui[g,regui[g,j],t] * z_lambda_gui[g,regui[g,j],t] + (1 - z_gui[g,regui[g,j],t])
+              cal.z_lambda_gui[g,regui[g,j],t] <- z_gui[g,regui[g,j],t] * z_intlambda_gui[g,regui[g,j],t] + (1 - z_gui[g,regui[g,j],t])
 
               for(s in 1:ngtax[g,j]) {
-                z_lambda_tax[g,s,regui[g,j],t] <- z_lambda[gtax[j,s,g],regui[g,j],t]
+                z_lambda_tax[g,s,regui[g,j],t] <- z_intlambda[gtax[j,s,g],regui[g,j],t]
                 z_reg_tax[g,s,regui[g,j],t] <- z_reg[gtax[j,s,g],regui[g,j],t]
               }
             }
