@@ -48,12 +48,12 @@ int_popgrow <- function(code, modenvG, var_cnt, var_wei, var_guild) {
             }
             for (t in 2:ntime) {
               C[s,idtax[s,i],t] ~ dgamma(1,1)
-              log_N[s,idtax[s,i],t] <- z[s,idtax[s,i],t-1] * log(muN[s,idtax[s,i]] * y[s,idtax[s,i],t-1] * (S[s,idtax[s,i],t-1] / S[s,idtax[s,i],t])) + (1 - z[s,idtax[s,i],t-1]) * C[s,idtax[s,i],t]
+              log_N[s,idtax[s,i],t] <- z[s,idtax[s,i],t-1] * log(muN[s,idtax[s,i]] * y[s,idtax[s,i],t-1] * (S[s,idtax[s,i],t] / S[s,idtax[s,i],t-1])) + (1 - z[s,idtax[s,i],t-1]) * C[s,idtax[s,i],t]
               y[s,idtax[s,i],t] ~ dlnorm(log_N[s,idtax[s,i],t], tauN[s,idtax[s,i]])
               N[s,idtax[s,i],t] <- z[s,idtax[s,i],t] * y[s,idtax[s,i],t]
 
               n_idt[s,idtax[s,i],t] <- z[s,idtax[s,i],t] * z[s,idtax[s,i],t-1]
-              N_intlambda_id[s,idtax[s,i],t] <- n_idt[s,idtax[s,i],t] * (y[s,idtax[s,i],t] / y[s,idtax[s,i],t-1]) * (S[s,idtax[s,i],t] / S[s,idtax[s,i],t-1])
+              N_intlambda_id[s,idtax[s,i],t] <- n_idt[s,idtax[s,i],t] * (y[s,idtax[s,i],t] / y[s,idtax[s,i],t-1]) * (S[s,idtax[s,i],t-1] / S[s,idtax[s,i],t])
               cal.Nlambda_id[s,idtax[s,i],t] <- N_intlambda_id[s,idtax[s,i],t] + (1 - n_idt[s,idtax[s,i],t])
             }
             log_N[s,idtax[s,i],1] ~ dgamma(1,1)
@@ -103,12 +103,12 @@ int_popgrow <- function(code, modenvG, var_cnt, var_wei, var_guild) {
                 log(muN[s,idtax[s,i],t]) <- alpha_N[s] + beta_N[s,1] * gvar[idtax[s,i],t,1]
               }
               C[s,idtax[s,i],t] ~ dgamma(1,1)
-              log_N[s,idtax[s,i],t] <- z[s,idtax[s,i],t-1] * log(muN[s,idtax[s,i],t] * y[s,idtax[s,i],t-1] * (S[s,idtax[s,i],t-1] / S[s,idtax[s,i],t])) + (1 - z[s,idtax[s,i],t-1]) * C[s,idtax[s,i],t]
+              log_N[s,idtax[s,i],t] <- z[s,idtax[s,i],t-1] * log(muN[s,idtax[s,i],t] * y[s,idtax[s,i],t-1] * (S[s,idtax[s,i],t] / S[s,idtax[s,i],t-1])) + (1 - z[s,idtax[s,i],t-1]) * C[s,idtax[s,i],t]
               y[s,idtax[s,i],t] ~ dlnorm(log_N[s,idtax[s,i],t], tauN[s,idtax[s,i]])
               N[s,idtax[s,i],t] <- z[s,idtax[s,i],t] * y[s,idtax[s,i],t]
 
               n_idt[s,idtax[s,i],t] <- z[s,idtax[s,i],t] * z[s,idtax[s,i],t-1]
-              N_intlambda_id[s,idtax[s,i],t] <- n_idt[s,idtax[s,i],t] * (y[s,idtax[s,i],t] / y[s,idtax[s,i],t-1]) * (S[s,idtax[s,i],t] / S[s,idtax[s,i],t-1])
+              N_intlambda_id[s,idtax[s,i],t] <- n_idt[s,idtax[s,i],t] * (y[s,idtax[s,i],t] / y[s,idtax[s,i],t-1]) * (S[s,idtax[s,i],t-1] / S[s,idtax[s,i],t])
               cal.Nlambda_id[s,idtax[s,i],t] <- N_intlambda_id[s,idtax[s,i],t] + (1 - n_idt[s,idtax[s,i],t])
             }
             log_N[s,idtax[s,i],1] ~ dgamma(1,1)
@@ -192,12 +192,12 @@ int_popgrow <- function(code, modenvG, var_cnt, var_wei, var_guild) {
             }
             for (t in 2:ntime) {
               W[s,idtax[s,i],t] ~ dgamma(1,1)
-              log_B[s,idtax[s,i],t] <- z[s,idtax[s,i],t-1] * log(muB[s,idtax[s,i]] * w[s,idtax[s,i],t-1] * (S[s,idtax[s,i],t-1] / S[s,idtax[s,i],t])) + (1 - z[s,idtax[s,i],t-1]) * W[s,idtax[s,i],t]
+              log_B[s,idtax[s,i],t] <- z[s,idtax[s,i],t-1] * log(muB[s,idtax[s,i]] * w[s,idtax[s,i],t-1] * (S[s,idtax[s,i],t] / S[s,idtax[s,i],t-1])) + (1 - z[s,idtax[s,i],t-1]) * W[s,idtax[s,i],t]
               w[s,idtax[s,i],t] ~ dlnorm(log_B[s,idtax[s,i],t], tauB[s,idtax[s,i]])
               B[s,idtax[s,i],t] <- z[s,idtax[s,i],t] * w[s,idtax[s,i],t]
 
               b_idt[s,idtax[s,i],t] <- z[s,idtax[s,i],t] * z[s,idtax[s,i],t-1]
-              B_intlambda_id[s,idtax[s,i],t] <- b_idt[s,idtax[s,i],t] * (w[s,idtax[s,i],t] / w[s,idtax[s,i],t-1]) * (S[s,idtax[s,i],t] / S[s,idtax[s,i],t-1])
+              B_intlambda_id[s,idtax[s,i],t] <- b_idt[s,idtax[s,i],t] * (w[s,idtax[s,i],t] / w[s,idtax[s,i],t-1]) * (S[s,idtax[s,i],t-1] / S[s,idtax[s,i],t])
               cal.Blambda_id[s,idtax[s,i],t] <- B_intlambda_id[s,idtax[s,i],t] + (1 - b_idt[s,idtax[s,i],t])
             }
             log_B[s,idtax[s,i],1] ~ dgamma(1,1)
@@ -247,12 +247,12 @@ int_popgrow <- function(code, modenvG, var_cnt, var_wei, var_guild) {
                 log(muB[s,idtax[s,i],t]) <- alpha_B[s] + beta_B[s,1] * gvar[idtax[s,i],t,1]
               }
               W[s,idtax[s,i],t] ~ dgamma(1,1)
-              log_B[s,idtax[s,i],t] <- z[s,idtax[s,i],t-1] * log(muB[s,idtax[s,i],t] * w[s,idtax[s,i],t-1] * (S[s,idtax[s,i],t-1] / S[s,idtax[s,i],t])) + (1 - z[s,idtax[s,i],t-1]) * W[s,idtax[s,i],t]
+              log_B[s,idtax[s,i],t] <- z[s,idtax[s,i],t-1] * log(muB[s,idtax[s,i],t] * w[s,idtax[s,i],t-1] * (S[s,idtax[s,i],t] / S[s,idtax[s,i],t-1])) + (1 - z[s,idtax[s,i],t-1]) * W[s,idtax[s,i],t]
               w[s,idtax[s,i],t] ~ dlnorm(log_B[s,idtax[s,i],t], tauB[s,idtax[s,i]])
               B[s,idtax[s,i],t] <- z[s,idtax[s,i],t] * w[s,idtax[s,i],t]
 
               b_idt[s,idtax[s,i],t] <- z[s,idtax[s,i],t] * z[s,idtax[s,i],t-1]
-              B_intlambda_id[s,idtax[s,i],t] <- b_idt[s,idtax[s,i],t] * (w[s,idtax[s,i],t] / w[s,idtax[s,i],t-1]) * (S[s,idtax[s,i],t] / S[s,idtax[s,i],t-1])
+              B_intlambda_id[s,idtax[s,i],t] <- b_idt[s,idtax[s,i],t] * (w[s,idtax[s,i],t] / w[s,idtax[s,i],t-1]) * (S[s,idtax[s,i],t-1] / S[s,idtax[s,i],t])
               cal.Blambda_id[s,idtax[s,i],t] <- B_intlambda_id[s,idtax[s,i],t] + (1 - b_idt[s,idtax[s,i],t])
             }
             log_B[s,idtax[s,i],1] ~ dgamma(1,1)
