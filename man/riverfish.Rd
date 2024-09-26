@@ -9,7 +9,7 @@ This dataset gives the abundance and biomass of seven freshwater fish species on
 sampled, from 2010 to 2022, by multiple-pass removal electrofishing. The sites are spread
 over six river-basins of metropolitan France.
 }
-\usage{data(riverfish)}
+\usage{riverfish}
 \format{
   \code{riverfish} is a data frame with 14 variables:
   \describe{

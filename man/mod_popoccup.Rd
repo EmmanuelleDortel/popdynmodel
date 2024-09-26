@@ -74,7 +74,7 @@ mcmc.out <- mod_popoccup(df[df$taxa == "eel",],
                          var_tmp = "year",
                          var_cnt = "headcount")
 
-## Occupancy dynamics of taxa and families and basin level
+## Occupancy dynamics of taxa and families at basin level
 mcmc.out <- mod_popoccup(df,
                          var_id = "pop_id",
                          var_tmp = "year",

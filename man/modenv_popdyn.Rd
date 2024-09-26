@@ -81,7 +81,7 @@ The models are run using the \code{runMCMC} function of \code{nimble} package.
 \code{modenv_popdyn} returns a list with the summaries of main statistics associated with the estimation of the requested parameters (\code{mcmc_summary}), the MCMC chains (\code{mcmc_chain}) and the list of parameters subscripts (\code{subscript}).
 }
 \seealso{
-\code{\link{modenv_popoccup}}, \code{\link{modenv_popgrow}}, \code{\link{modenv_popdynRS}} and \code{\link{get_modparameters}}
+\code{\link{modenv_popoccup}}, \code{\link{modenv_popgrow}} and \code{\link{get_modparameters}}
 }
 \description{
 Fits Bayesian hierarchical single or multi-taxa occupancy and growth models with environmental stochasticity to abundance and/or biomass time series. The modelling framework not accounts for detection biases of taxa and individuals.

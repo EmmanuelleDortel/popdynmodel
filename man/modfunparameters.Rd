@@ -7,7 +7,7 @@
 \description{
 This data frame gives the description of the parameters used in modelling functions.
 }
-\usage{data(modfunparameters)}
+\usage{modfunparameters}
 \format{
   \code{modfunparameters} is a data frame with 4 variables:
   \describe{

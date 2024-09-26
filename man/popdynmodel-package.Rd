@@ -6,17 +6,15 @@
 \alias{popdynmodel-package}
 \title{popdynmodel: an R package to implement population dynamics models in hierarchical Bayesian framework}
 \description{
-This package provides tools and functions to implement population dynamics models in a hierarchical Bayesian framework. The models are intended for occupancy, abundance and/or biomass time series. They allow the estimation of occupancy change rates and population growth rates, for one or more taxa, at various spatial and temporal scales.
+This package provides tools and functions to implement population dynamics models in a hierarchical Bayesian framework. The models are intended for occupancy, abundance and/or biomass time series and allow to estimate occupancy change rates and population growth rates for one or more taxa at various spatial and temporal scales.
 
-Function names start with specific prefixes:
+This package incudes different types of functions defined by a specific prefixe:
 \itemize{
-\item \code{get_} : get information about modelling functions
-\item \code{mef_} : format an input dataframe to meet with the models requirements
-\item \code{mod_} : modelling function
-\item \code{modenv_} : modelling function with environmental stochasticity
+\item \code{get_} :  getting information about package modelling functions
+\item \code{mef_} : dataframes formatting (useful for meeting modelling functions requirements)
+\item \code{mod_} : simply statistical relationship-based modelling
+\item \code{modenv_} : environmental relationship-based modelling
+\item \code{wri_} : writing model code, input data file, summary statistics
 }
-}
-\author{
-\strong{Maintainer}: Dortel E. \email{emmanuelle.dortel@gmail.com}
 }
 \keyword{internal}
