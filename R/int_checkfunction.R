@@ -57,7 +57,8 @@ int_checkfunction <- function(df, vars_in_df, vars_na, vars_numeric, vars_duplic
   }
   #-----------------------------------------------------------------------------
   if (!is.null(vars_pas)) {
-    dpas <- reframe(df, across(unlist(vars_pas[1]), ~length(.x) == max(.x), .names = "pas"), .by = unlist(vars_pas[2:4]))
+    pasvars <- mapply(function(i) as.vector(vars_pas[[i]], mode = "character"), 2:length(vars_pas), SIMPLIFY = "vector")
+    dpas <- reframe(df, across(unlist(vars_pas[[1]]), ~length(.x) == max(.x), .names = "pas"), .by = !!pasvars)
     if (FALSE %in% dpas$pas) {
       abort("missing passes in 'var_pas'", call = call)
     }
@@ -65,3 +66,5 @@ int_checkfunction <- function(df, vars_in_df, vars_na, vars_numeric, vars_duplic
   #-----------------------------------------------------------------------------
   return(df)
 }
+
+

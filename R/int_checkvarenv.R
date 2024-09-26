@@ -1,20 +1,20 @@
 #' Check and transform environmental covariates
-#' 
+#'
 #' @import magrittr
-#' @import dplyr 
+#' @import dplyr
 #' @importFrom rlang abort quo_name
 #' @importFrom tidyselect all_of
 #'
 #' @param df data frame
 #' @param var_id quosure
 #' @param vars list of expressions
-#' @param call 
+#' @param call
 #'
 #' @return df
 #' @keywords internal
 #' @noRd
 int_checkvarenv <- function(df, var_id, var_tmp, vars, call = caller_env()) {
-  if (length(vars) > 0) { 
+  if (length(vars) > 0) {
     if (FALSE %in% is.element(c(unlist(vars[!vars %in% NULL]),quo_name(var_id),quo_name(var_tmp)),colnames(df))) {
       abort("must use existing variables",call = call)
     }

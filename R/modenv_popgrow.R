@@ -82,8 +82,8 @@ modenv_popgrow <- function(df, var_id, var_tmp, var_env, var_tax=NULL, var_cnt=N
   if (FALSE %in% quo_is_null(var_cnt)) { var_pres <- var_cnt } else { var_pres <- var_wei }
   #-----------------------------------------------------------------------------
   # Write model and model data
-  datamodel <- do.call(int_datamodel, list(df, occup=FALSE, grow=TRUE, modenv=FALSE, modenvG=TRUE, alt=FALSE, timestep, period, var_id, var_tmp, var_tax, var_pres, var_reg, var_guild, var_cnt, var_wei, var_surf, var_pro=NULL, var_envO=NULL, var_envP=NULL, var_envC=NULL, var_grow))
-  code <- do.call(int_popoccup, list(occup=FALSE,modenv=FALSE,var_envO=NULL,var_envP=NULL,var_envC=NULL,var_guild=NULL))
+  datamodel <- do.call(int_datamodel, list(df, occup=FALSE, grow=TRUE, modenv=FALSE, modenvG=TRUE, alt=FALSE, RS=FALSE, timestep, period, var_id, var_tmp, var_tax, var_pres, var_reg, var_guild, var_cnt, var_wei, var_surf, var_pro=NULL, var_pas = NULL, var_envO=NULL, var_envP=NULL, var_envC=NULL, var_grow, var_det=NULL))
+  code <- do.call(int_popoccup, list(occup=FALSE,modenv=FALSE,RS=FALSE,var_envO=NULL,var_envP=NULL,var_envC=NULL,var_guild=NULL,var_det=NULL))
   popdyn_code <- do.call(int_popgrow, list(code,modenvG=TRUE,var_cnt,var_wei,var_guild))
   #-----------------------------------------------------------------------------
   # Define requested parameters
@@ -120,6 +120,7 @@ modenv_popgrow <- function(df, var_id, var_tmp, var_env, var_tax=NULL, var_cnt=N
     return(mcmc_chain)
     stop(expression(NULL))
   }
+  mcmc_summary <- do.call(int_mpaestimate, list(mcmc_summary, mcmc_chain))
   list_summary <- do.call(int_transformsummary, list(mcmc_summary, datamodel, var_id, var_tmp, var_tax, period))
   output <- list(mcmc_summary = list_summary$mcmc_summary, mcmc_chain = mcmc_chain, subscript = list_summary$subscript)
   #-----------------------------------------------------------------------------

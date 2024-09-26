@@ -73,8 +73,8 @@ mod_popoccup <- function(df, var_id, var_tmp, var_cnt, var_tax=NULL, var_reg=NUL
   var_guild <- enquo(var_guild)
   #-----------------------------------------------------------------------------
   # Write model and model data
-  datamodel <- do.call(int_datamodel, list(df, occup=TRUE, grow=FALSE, modenv=FALSE, modenvG=FALSE, alt=FALSE, timestep, period, var_id, var_tmp, var_tax, var_pres, var_reg, var_guild, var_cnt=NULL, var_wei=NULL, var_surf=NULL, var_pro=NULL, var_envO=NULL, var_envP=NULL, var_envC=NULL, var_grow=NULL))
-  code <- do.call(int_popoccup, list(occup=TRUE,modenv=FALSE,var_envO=NULL,var_envP=NULL,var_envC=NULL,var_guild))
+  datamodel <- do.call(int_datamodel, list(df, occup=TRUE, grow=FALSE, modenv=FALSE, modenvG=FALSE, alt=FALSE, RS=FALSE, timestep, period, var_id, var_tmp, var_tax, var_pres, var_reg, var_guild, var_cnt=NULL, var_wei=NULL, var_surf=NULL, var_pro=NULL, var_pas=NULL, var_envO=NULL, var_envP=NULL, var_envC=NULL, var_grow=NULL, var_det=NULL))
+  code <- do.call(int_popoccup, list(occup=TRUE,modenv=FALSE,RS=FALSE,var_envO=NULL,var_envP=NULL,var_envC=NULL,var_guild,var_det=NULL))
   popdyn_code <- as.call(c(as.symbol("{"), code))
   #-----------------------------------------------------------------------------
   # Define requested parameters
@@ -107,6 +107,7 @@ mod_popoccup <- function(df, var_id, var_tmp, var_cnt, var_tax=NULL, var_reg=NUL
   #-----------------------------------------------------------------------------
   # set summary data frame of taxa and guilds and list of subscripts
   mcmc_summary <- MCMCsummary(mcmc_chain, probs = c(0.025, 0.25, 0.5, 0.75, 0.975), Rhat = TRUE, n.eff = TRUE)
+  mcmc_summary <- do.call(int_mpaestimate, list(mcmc_summary, mcmc_chain))
   list_summary <- do.call(int_transformsummary, list(mcmc_summary, datamodel, var_id, var_tmp, var_tax, period))
   output <- list(mcmc_summary = list_summary$mcmc_summary, mcmc_chain = mcmc_chain, subscript = list_summary$subscript)
   #-----------------------------------------------------------------------------

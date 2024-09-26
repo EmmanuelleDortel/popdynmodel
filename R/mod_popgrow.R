@@ -74,8 +74,8 @@ mod_popgrow <- function(df, var_id, var_tmp, var_tax=NULL, var_cnt=NULL, var_wei
   if (FALSE %in% quo_is_null(var_cnt)) { var_pres <- var_cnt } else { var_pres <- var_wei }
   #-----------------------------------------------------------------------------
   # Write model and model data
-  datamodel <- do.call(int_datamodel, list(df, occup=FALSE, grow=TRUE, modenv=FALSE, modenvG=FALSE, alt=FALSE, timestep, period, var_id, var_tmp, var_tax, var_pres, var_reg, var_guild, var_cnt, var_wei, var_surf, var_pro=NULL, var_envO=NULL, var_envP=NULL, var_envC=NULL, var_grow=NULL))
-  code <- do.call(int_popoccup, list(occup=FALSE,modenv=FALSE,var_envO=NULL,var_envP=NULL,var_envC=NULL,var_guild=NULL))
+  datamodel <- do.call(int_datamodel, list(df, occup=FALSE, grow=TRUE, modenv=FALSE, modenvG=FALSE, alt=FALSE, RS=FALSE, timestep, period, var_id, var_tmp, var_tax, var_pres, var_reg, var_guild, var_cnt, var_wei, var_surf, var_pro=NULL, var_pas=NULL, var_envO=NULL, var_envP=NULL, var_envC=NULL, var_grow=NULL, var_det=NULL))
+  code <- do.call(int_popoccup, list(occup=FALSE,modenv=FALSE,RS=FALSE,var_envO=NULL,var_envP=NULL,var_envC=NULL,var_guild=NULL,var_det=NULL))
   popdyn_code <- do.call(int_popgrow, list(code,modenvG=FALSE,var_cnt,var_wei,var_guild))
   #-----------------------------------------------------------------------------
   # Define requested parameters
@@ -108,6 +108,7 @@ mod_popgrow <- function(df, var_id, var_tmp, var_tax=NULL, var_cnt=NULL, var_wei
   #-----------------------------------------------------------------------------
   # set summary data frame and list of subscripts
   mcmc_summary <- MCMCsummary(mcmc_chain, probs = c(0.025, 0.25, 0.5, 0.75, 0.975), Rhat = TRUE, n.eff = TRUE)
+  mcmc_summary <- do.call(int_mpaestimate, list(mcmc_summary, mcmc_chain))
   list_summary <- do.call(int_transformsummary, list(mcmc_summary, datamodel, var_id, var_tmp, var_tax, period))
   output <- list(mcmc_summary = list_summary$mcmc_summary, mcmc_chain = mcmc_chain, subscript = list_summary$subscript)
   #-----------------------------------------------------------------------------

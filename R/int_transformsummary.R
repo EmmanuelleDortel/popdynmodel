@@ -18,7 +18,7 @@
 #' @noRd
 int_transformsummary <- function(mcmc_summary, datamodel, var_id, var_tmp, var_tax, period) {
   #-----------------------------------------------------------------------------
-  colnames(mcmc_summary) <- c("mean", "sd", "Q2.5", "Q25", "Q50", "Q75", "Q97.5", "Rhat", "n.eff")
+  colnames(mcmc_summary) <- c("mode", "mean", "sd", "Q2.5", "Q25", "Q50", "Q75", "Q97.5", "Rhat", "n.eff")
   id <- datamodel$popdyn_int$id
   time <- datamodel$popdyn_int$time
   tax <- datamodel$popdyn_int$taxa
@@ -47,8 +47,9 @@ int_transformsummary <- function(mcmc_summary, datamodel, var_id, var_tmp, var_t
     relocate(parameter, .before = mean)
   #-----------------------------------------------------------------------------
   # get variable names from position
-  mcmc_summary$paratax <- ifelse(mcmc_summary$parameter %in% c("z","p.per","p.col","p.ext","p.per_id","p.col_id","p.ext_id","alpha","beta","alpha_per","beta_per","alpha_col","beta_col","z_lambda","z_mulambda","z_intlambda","turnover","OR","muOR","N","N_lambda_id","N_mulambda_id","N_intlambda_id","N_lambda","N_mulambda","N_intlambda","N_PGR","N_muPGR","B","B_lambda_id","B_mulambda_id","B_intlambda_id","B_lambda","B_mulambda","B_intlambda","B_PGR","B_muPGR","alpha_N","beta_N","alpha_B","beta_B","p.det","alpha_det","beta_det"), tax[mcmc_summary$p1], NA)
+  mcmc_summary$paratax <- ifelse(mcmc_summary$parameter %in% c("z","p.per","p.col","p.ext","p.per_id","p.col_id","p.ext_id","alpha","beta","alpha_per","beta_per","alpha_col","beta_col","z_lambda","z_mulambda","z_intlambda","turnover","OR","muOR","N","N_lambda_id","N_mulambda_id","N_intlambda_id","N_lambda","N_mulambda","N_intlambda","N_PGR","N_muPGR","B","B_lambda_id","B_mulambda_id","B_intlambda_id","B_lambda","B_mulambda","B_intlambda","B_PGR","B_muPGR","alpha_N","beta_N","alpha_B","beta_B","p.det","p.det_id","alpha_det","beta_det"), tax[mcmc_summary$p1], NA)
   mcmc_summary$paraid <- ifelse(mcmc_summary$parameter %in% c("z","N","B","p.per_id","p.ext_id","p.col_id","N","N_lambda_id","N_mulambda_id","N_intlambda_id","B_lambda_id","B_mulambda_id","B_intlambda_id"), id[mcmc_summary$p2], NA)
+  mcmc_summary$paraid <- ifelse(mcmc_summary$parameter %in% c("p.det_id"), id[mcmc_summary$p3], mcmc_summary$paraid)
   mcmc_summary$paratime <- ifelse(mcmc_summary$parameter %in% c("z","z_intlambda","turnover","z_intlambda_gui","N","N_intlambda_id","N_intlambda","B","B_intlambda_id","B_intlambda","N_intlambda_gui","B_intlambda_gui"), time[mcmc_summary$p3], NA)
   #-----------------------------------------------------------------------------
   # get region names and subscripts
@@ -97,8 +98,7 @@ int_transformsummary <- function(mcmc_summary, datamodel, var_id, var_tmp, var_t
   # get names and subscripts of sampling protocol
   sub_pro <- NULL
   if (!is.null(protocol)) {
-    mcmc_summary$protocol <- ifelse(mcmc_summary$parameter %in% c("p.det","alpha_det"), protocol[mcmc_summary$p2], NA)
-    mcmc_summary$protocol <- ifelse(mcmc_summary$parameter %in% c("beta_det"), protocol[mcmc_summary$p3], mcmc_summary$protocol)
+    mcmc_summary$protocol <- ifelse(mcmc_summary$parameter %in% c("p.det","p.det_id"), protocol[mcmc_summary$p2], NA)
     sub_pro <- select(mcmc_summary, protocol, p2) %>% na.omit() %>% distinct() %>% arrange(p2) %>% set_colnames(c("","subscript")) %>% set_rownames(NULL)
   }
   #-----------------------------------------------------------------------------

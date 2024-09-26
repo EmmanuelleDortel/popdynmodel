@@ -10,9 +10,12 @@
 #' @param var_tmp character
 #' @param var_tax character
 #' @param var_cnt character
+#' @param var_pas character
+#' @param var_pro character
 #' @param var_envO character or character vector
 #' @param var_envP character or character vector
 #' @param var_envC character or character vector
+#' @param var_det character or character vector
 #' @param var_reg character or character vector
 #' @param var_guild character or character vector
 #' @param period list
@@ -28,79 +31,75 @@
 #'
 #' @examples
 #' \dontrun{
-#' df <- riverfish[riverfish$pass == 1,]
-#' mcmc.out <- modenv_popoccup(df[df$taxa == "eel",],
+#' mcmc.out <- modenv_popoccupRS(riverfish,
 #' var_id = "pop_id",
 #' var_tmp = "year",
-#' var_cnt = "headcount",
-#' var_envO = c("temperature","depth"),
-#' n_chain=2,n_iter=10,n_thin=1,n_burnin=0)
-#' mcmc.out <- modenv_popoccup(df[df$taxa == "eel",],
-#' var_id = "pop_id",
-#' var_tmp = "year",
-#' var_cnt = "headcount",
-#' var_envO = c("temperature","depth"),
-#' var_reg = "hydro_basin",
-#' period = list(c(2010,2016),c(2016,2022)),
-#' n_chain=2,n_iter=10,n_thin=1,n_burnin=0)
-#' mcmc.out <- modenv_popoccup(df,
-#' var_id = "pop_id",
-#' var_tmp = "year",
-#' var_cnt = "headcount",
 #' var_tax = "taxa",
-#' var_envP = c("temperature","depth"),
-#' n_chain=2,n_iter=10,n_thin=1,n_burnin=0)
-#' mcmc.out <- modenv_popoccup(df,
+#' var_pas = "pass",
+#' var_cnt = "headcount",
+#' var_envO = "temperature")
+#' mcmc.out <- modenv_popoccupRS(riverfish,
 #' var_id = "pop_id",
 #' var_tmp = "year",
-#' var_cnt = "headcount",
 #' var_tax = "taxa",
-#' var_envP = c("temperature","depth"),
-#' var_envC = "temperature",
-#' n_chain=2,n_iter=10,n_thin=1,n_burnin=0)
-#' mcmc.out <- modenv_popoccup(df,
+#' var_pas = "pass",
+#' var_cnt = "headcount",
+#' var_envO = "temperature",
+#' var_det = "depth")
+#' df <- mef_convertquali(riverfish, var_quali="fishing")
+#' mcmc.out <- modenv_popoccupRS(df, 
 #' var_id = "pop_id",
 #' var_tmp = "year",
-#' var_cnt = "headcount",
 #' var_tax = "taxa",
-#' var_envP = c("temperature","depth"),
-#' var_envC = "temperature",
-#' var_guild = "family",
-#' n_chain=2,n_iter=10,n_thin=1,n_burnin=0)
+#' var_pas = "pass",
+#' var_cnt = "headcount",
+#' var_envO = "temperature",
+#' var_det = c("depth","fishing_complete"))
+#' mcmc.out <- modenv_popoccupRS(riverfish[riverfish$taxa %in% "pike",],
+#' var_id = "pop_id",
+#' var_tmp = "year",
+#' var_pas = "pass",
+#' var_cnt = "headcount",
+#' var_det = c("temperature","depth"))
 #' }
-modenv_popoccup <- function(df, var_id, var_tmp, var_cnt, var_tax=NULL, var_envO=NULL, var_envP=NULL, var_envC=NULL, var_reg=NULL, var_guild=NULL, period=NULL, timestep=1, save_parameters=NULL, n_chain=3, n_iter=102000, n_thin=1000, n_burnin=2000) {
+modenv_popoccupRS <- function(df, var_id, var_tmp, var_cnt, var_pas, var_pro=NULL, var_tax=NULL, var_envO=NULL, var_envP=NULL, var_envC=NULL, var_det=NULL, var_reg=NULL, var_guild=NULL, period=NULL, timestep=1, save_parameters=NULL, n_chain=3, n_iter=102000, n_thin=1000, n_burnin=2000) {
   #-----------------------------------------------------------------------------
   # Check for missing required arguments
   check_required(var_id)
   check_required(var_tmp)
   check_required(var_cnt)
-  if (quo_is_null(enquo(var_envO)) & quo_is_null(enquo(var_envP)) & quo_is_null(enquo(var_envC))) {
-    abort("'var_envO', 'var_envP' or 'var_envC' must be supplied")
+  check_required(var_pas)
+  if (quo_is_null(enquo(var_envO)) & quo_is_null(enquo(var_envP)) & quo_is_null(enquo(var_envC)) & quo_is_null(enquo(var_det))) {
+    abort("'var_envO', 'var_envP', 'var_envC' or 'var_det' must be supplied")
   }
   #-----------------------------------------------------------------------------
   # Check for mistakes, if failure return an error message and stop
-  df <- do.call(int_checkvarenv, list(df, var_id=enquo(var_id), var_tmp=enquo(var_tmp), vars=syms(c(var_envO,var_envP,var_envC))))
+  df <- do.call(int_checkvarenv, list(df, var_id=enquo(var_id), var_tmp=enquo(var_tmp), vars=syms(c(var_envO,var_envP,var_envC,var_det))))
   df <- do.call(int_checkfunction, list(df,
-                                        vars_in_df=syms(c(var_id, var_tmp, var_tax, var_cnt, var_envO, var_envP, var_envC, var_reg, var_guild)),
-                                        vars_na=syms(c(var_id, var_tmp, var_tax, var_envO, var_envP, var_envC)),
-                                        vars_numeric=syms(c(var_tmp, var_cnt, var_envO, var_envP, var_envC)),
-                                        vars_duplicate=syms(c(var_id, var_tmp, var_tax)),
+                                        vars_in_df=syms(c(var_id, var_tmp, var_tax, var_cnt, var_envO, var_envP, var_envC, var_reg, var_guild, var_pas, var_pro, var_det)),
+                                        vars_na=syms(c(var_id, var_tmp, var_tax, var_envO, var_envP, var_envC, var_pas, var_pro, var_det)),
+                                        vars_numeric=syms(c(var_tmp, var_cnt, var_envO, var_envP, var_envC, var_pas, var_det)),
+                                        vars_duplicate=syms(c(var_id, var_tmp, var_tax, var_pas)),
                                         var_tmp=enquo(var_tmp), timestep, period,
-                                        vars_pas=NULL))
+                                        vars_pas=syms(c(var_pas, var_id, var_tmp, var_tax))))
   #-----------------------------------------------------------------------------
   var_id <- enquo(var_id)
   var_tmp <- enquo(var_tmp)
   var_tax <- enquo(var_tax)
   var_pres <- enquo(var_cnt)
+  var_pas <- enquo(var_pas)
+  var_pro <- enquo(var_pro)
   var_envO <- enquo(var_envO)
   var_envP <- enquo(var_envP)
   var_envC <- enquo(var_envC)
+  var_det <- enquo(var_det)
   var_reg <- enquo(var_reg)
   var_guild <- enquo(var_guild)
   #-----------------------------------------------------------------------------
   # Write model and model data
-  datamodel <- do.call(int_datamodel, list(df, occup=TRUE, grow=FALSE, modenv=TRUE, modenvG=FALSE, alt=FALSE, RS=FALSE, timestep, period, var_id, var_tmp, var_tax, var_pres, var_reg, var_guild, var_cnt=NULL, var_wei=NULL, var_surf=NULL, var_pro=NULL, var_pas=NULL, var_envO, var_envP, var_envC, var_grow=NULL, var_det=NULL))
-  code <- do.call(int_popoccup, list(occup=TRUE,modenv=TRUE,RS=FALSE,var_envO,var_envP,var_envC,var_guild,var_det=NULL))
+  if (quo_is_null(enquo(var_envO)) & quo_is_null(enquo(var_envP)) & quo_is_null(enquo(var_envC))) { modenv <- FALSE } else { modenv <- TRUE }
+  datamodel <- do.call(int_datamodel, list(df, occup=TRUE, grow=FALSE, modenv, modenvG=FALSE, alt=FALSE, RS=TRUE, timestep, period, var_id, var_tmp, var_tax, var_pres, var_reg, var_guild, var_cnt=NULL, var_wei=NULL, var_surf=NULL, var_pro, var_pas, var_envO, var_envP, var_envC, var_grow=NULL, var_det))
+  code <- do.call(int_popoccup, list(occup=TRUE,modenv,RS=TRUE,var_envO,var_envP,var_envC,var_guild,var_det))
   popdyn_code <- as.call(c(as.symbol("{"), code))
   #-----------------------------------------------------------------------------
   # Define requested parameters
