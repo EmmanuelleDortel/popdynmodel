@@ -1,6 +1,6 @@
 Package: popdynmodel
 Title: POPULATION DYNAMICS MODELLING
-Version: 26.4.24
+Version: 24.09.24
 Description: Provides tools to implement population dynamics models in a hierarchical Bayesian framework.
 License: GPL-3
 Encoding: UTF-8
@@ -8,12 +8,12 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Depends: R (>= 4.2.0)
 LazyData: TRUE
-Author: Emmanuelle Dortel[cre,aut] <emmanuelle.dortel@gmail.com>, Aurelien Besnard[ctb] <aurelien.besnard@cefe.cnrs.fr>, Nicolas Poulet[ctb] <nicolas.poulet@ofb.gouv.fr>, Pascal Irz[ctb] <pascal.irz@ofb.gouv.fr>
+Author: Emmanuelle Dortel[cre,aut] <emmanuelle.dortel@gmail.com>, Aurelien Besnard[ctb] <aurelien.besnard@cefe.cnrs.fr>, Nicolas Poulet[ctb] <nicolas.poulet@ofb.gouv.fr>
 Maintainer: Emmanuelle Dortel <emmanuelle.dortel@gmail.com>
-Imports: dplyr, magrittr, MCMCvis, nimble, rlang, stats, stringr, tidyr, tidyselect
+Language: en
+LazyDataCompression: xz
+Imports: coda, dplyr, magrittr, MCMCvis, nimble, rlang, stats, stringr, tidyr, tidyselect
 Suggests: 
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-Language: en
-LazyDataCompression: xz
