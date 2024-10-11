@@ -27,15 +27,17 @@ int_popgrow <- function(code, modenvG, var_cnt, var_wei, var_guild) {
           }
           for (t in 2:ntime) {
             n_regt[s,reg[s,j],t] <- n_zreg[s,reg[s,j],t] * n_zreg[s,reg[s,j],t-1]
-            N_intlambda[s,reg[s,j],t] <- n_regt[s,reg[s,j],t] * Nreg[s,reg[s,j],t] / (n_zreg[s,reg[s,j],t-1] * Nreg[s,reg[s,j],t-1] + (1 - n_zreg[s,reg[s,j],t-1]))
+            N_intlambda[s,reg[s,j],t] <- n_regt[s,reg[s,j],t] * Nreg[s,reg[s,j],t] / (n_zreg[s,reg[s,j],t-1] * Nreg[s,reg[s,j],t-1] + (1 - n_zreg[s,reg[s,j],t-1])) * (Sreg[s,reg[s,j],t-1] / Sreg[s,reg[s,j],t])
             cal.N_intlambda[s,reg[s,j],t] <- N_intlambda[s,reg[s,j],t] + (1 - n_regt[s,reg[s,j],t])
           }
           for (t in 1:ntime) {
             n_zreg[s,reg[s,j],t] <- max(nz[s,reg[s,j],1:nidreg[s,j],t])
             Nreg[s,reg[s,j],t] <- sum(cal.N[s,reg[s,j],1:nidreg[s,j],t])
+            Sreg[s,reg[s,j],t] <- sum(cal.S[s,reg[s,j],1:nidreg[s,j],t])
             for (i in 1:nidreg[s,j]) {
               nz[s,reg[s,j],i,t] <- z[s,idreg[j,i,s],t]
-              cal.N[s,reg[s,j],i,t] <- N[s,idreg[j,i,s],t] / S[s,idreg[j,i,s],t]
+              cal.N[s,reg[s,j],i,t] <- N[s,idreg[j,i,s],t]
+              cal.S[s,reg[s,j],i,t] <- S[s,idreg[j,i,s],t]
             }
           }
         }
@@ -154,15 +156,17 @@ int_popgrow <- function(code, modenvG, var_cnt, var_wei, var_guild) {
           }
           for (t in 2:ntime) {
             b_regt[s,reg[s,j],t] <- b_zreg[s,reg[s,j],t] * b_zreg[s,reg[s,j],t-1]
-            B_intlambda[s,reg[s,j],t] <- b_regt[s,reg[s,j],t] * Breg[s,reg[s,j],t] / (b_zreg[s,reg[s,j],t-1] * Breg[s,reg[s,j],t-1] + (1 - b_zreg[s,reg[s,j],t-1]))
+            B_intlambda[s,reg[s,j],t] <- b_regt[s,reg[s,j],t] * Breg[s,reg[s,j],t] / (b_zreg[s,reg[s,j],t-1] * Breg[s,reg[s,j],t-1] + (1 - b_zreg[s,reg[s,j],t-1])) * (BSreg[s,reg[s,j],t-1] / BSreg[s,reg[s,j],t])
             cal.B_intlambda[s,reg[s,j],t] <- B_intlambda[s,reg[s,j],t] + (1 - b_regt[s,reg[s,j],t])
           }
           for (t in 1:ntime) {
             b_zreg[s,reg[s,j],t] <- max(bz[s,reg[s,j],1:nidreg[s,j],t])
             Breg[s,reg[s,j],t] <- sum(cal.B[s,reg[s,j],1:nidreg[s,j],t])
+            BSreg[s,reg[s,j],t] <- sum(cal.BS[s,reg[s,j],1:nidreg[s,j],t])
             for (i in 1:nidreg[s,j]) {
               bz[s,reg[s,j],i,t] <- z[s,idreg[j,i,s],t]
-              cal.B[s,reg[s,j],i,t] <- B[s,idreg[j,i,s],t] / S[s,idreg[j,i,s],t]
+              cal.B[s,reg[s,j],i,t] <- S[s,idreg[j,i,s],t]
+              cal.BS[s,reg[s,j],i,t] <- S[s,idreg[j,i,s],t]
             }
           }
         }
