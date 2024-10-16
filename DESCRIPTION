@@ -1,6 +1,6 @@
 Package: popdynmodel
 Title: POPULATION DYNAMICS MODELLING
-Version: 24.09.24
+Version: 16.10.24
 Description: Provides tools to implement population dynamics models in a hierarchical Bayesian framework.
 License: GPL-3
 Encoding: UTF-8
@@ -12,7 +12,7 @@ Author: Emmanuelle Dortel[cre,aut] <emmanuelle.dortel@gmail.com>, Aurelien Besna
 Maintainer: Emmanuelle Dortel <emmanuelle.dortel@gmail.com>
 Language: en
 LazyDataCompression: xz
-Imports: coda, dplyr, magrittr, MCMCvis, nimble, rlang, stats, stringr, tidyr, tidyselect
+Imports: coda, dplyr, magrittr, MCMCvis, modeest, nimble, rlang, stats, stringr, tidyr, tidyselect
 Suggests: 
     knitr,
     rmarkdown
