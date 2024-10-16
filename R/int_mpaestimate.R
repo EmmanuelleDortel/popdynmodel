@@ -1,9 +1,10 @@
 #' Estimates the maximum a posteriori probabilities
-#' 
+#'
 #' @import magrittr
 #' @import dplyr
 #' @import coda
 #' @importFrom stats density
+#' @importFrom modeest mlv
 #'
 #' @param mcmc_summary data.frame
 #' @param mcmc_chain mcmc.list
@@ -16,10 +17,10 @@ int_mpaestimate <- function(mcmc_summary, mcmc_chain) {
   mpa <- do.call("rbind", lapply(row.names(mcmc_summary), function(i) {
     mcmc.val <- unique(round(mcmc[,i],10))
     if (length(mcmc.val) > 1) {
-      mod <- density(mcmc[,i])$x[which(density(mcmc[,i])$y == max(density(mcmc[,i])$y))]
-      if (length(mod) > 1) { mod <- NA }
+      dmod <- density(mcmc[,i])$x[which(density(mcmc[,i])$y == max(density(mcmc[,i])$y))]
+      if (length(dmod) > 1) { mod <- NA } else { mod <- mlv(mcmc[,i], method = "short")}
     } else {
-      mod <- mcmc.val 
+      mod <- mcmc.val
     }
     mat.mod <- matrix(mod, dimnames =  list(i,"mode"))
     return(mat.mod)
