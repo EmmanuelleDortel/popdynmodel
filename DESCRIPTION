@@ -1,6 +1,6 @@
 Package: popdynmodel
 Title: POPULATION DYNAMICS MODELLING
-Version: 16.10.24
+Version: 5.11.24
 Description: Provides tools to implement population dynamics models in a hierarchical Bayesian framework.
 License: GPL-3
 Encoding: UTF-8

@@ -14,7 +14,7 @@
 
 # Installation
 
-*popdynmodel* requires the following packages to be installed: *dplyr*, *coda*, *magrittr*, *MCMCvis*, *nimble*, *rlang*, *stringr*; *tidyr* and *tidyverse*. You can install the missing packages from CRAN using the following command:
+*popdynmodel* requires the following packages to be installed: *dplyr*, *coda*, *magrittr*, *MCMCvis*, *modeest*, *nimble*, *rlang*, *stringr*; *tidyr* and *tidyverse*. You can install the missing packages from CRAN using the following command:
 
 ``` r 
 install.packages(c("dplyr", "coda", "magrittr", "MCMCvis", "modeest", "nimble", "rlang", "stringr", "tidyr", "tidyverse"))
