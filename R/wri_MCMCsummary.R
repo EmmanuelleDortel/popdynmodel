@@ -1,5 +1,5 @@
 #' Writes summary information from MCMC chains
-#' 
+#'
 #' @importFrom coda is.mcmc.list
 #' @importFrom MCMCvis MCMCsummary
 #'
@@ -12,7 +12,7 @@
 #' @examples
 #' \dontrun{
 #' df <- riverfish[riverfish$pass == 1,]
-#' modpopoccup <- wri_popmodel(df, 
+#' modpopoccup <- wri_popmodel(df,
 #' model = "mod_popoccup",
 #' var_id = "pop_id",
 #' var_tmp = "year",
@@ -28,12 +28,12 @@
 #' MCMCComp <- compileNimble(nimModel)
 #' nimModelComp <- compileNimble(MCMCbuild, project = nimModel, resetFunctions = TRUE)
 #' mcmc_chain <- runMCMC(nimModelComp, nchains = 3, niter = 100, thin = 1, nburnin = 10, samplesAsCodaMCMC = TRUE)
-#' MCMC_summary <- wri_MCMCsummary(mcmc_chain, modpopoccup$pop_internal)  
+#' MCMC_summary <- wri_MCMCsummary(mcmc_chain, modpopoccup$pop_internal)
 #' }
 wri_MCMCsummary <- function(mcmc_chain, pop_internal) {
   #-----------------------------------------------------------------------------
   # Remove missing values from MCMC chain
-  if (isTRUE(is.mcmc.list(mcmc_chain))) { 
+  if (isTRUE(is.mcmc.list(mcmc_chain))) {
     n_chain <- length(mcmc_chain)
   } else { n_chain <- 1 }
   if (n_chain == 1 & !is.null(dim(mcmc_chain))) {

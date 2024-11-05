@@ -47,15 +47,15 @@ int_transformsummary <- function(mcmc_summary, datamodel, var_id, var_tmp, var_t
     relocate(parameter, .before = mean)
   #-----------------------------------------------------------------------------
   # get variable names from position
-  mcmc_summary$paratax <- ifelse(mcmc_summary$parameter %in% c("z","p.per","p.col","p.ext","p.per_id","p.col_id","p.ext_id","alpha","beta","alpha_per","beta_per","alpha_col","beta_col","z_lambda","z_mulambda","z_intlambda","turnover","OR","muOR","N","N_lambda_id","N_mulambda_id","N_intlambda_id","N_lambda","N_mulambda","N_intlambda","N_PGR","N_muPGR","B","B_lambda_id","B_mulambda_id","B_intlambda_id","B_lambda","B_mulambda","B_intlambda","B_PGR","B_muPGR","alpha_N","beta_N","alpha_B","beta_B","p.det","p.det_id","alpha_det","beta_det"), tax[mcmc_summary$p1], NA)
+  mcmc_summary$paratax <- ifelse(mcmc_summary$parameter %in% c("z","p.per","p.col","p.ext","p.per_id","p.col_id","p.ext_id","alpha","beta","alpha_per","beta_per","alpha_col","beta_col","z_lambda","z_mulambda","z_intlambda","turnover","OR","muOR","N","N_lambda_id","N_mulambda_id","N_intlambda_id","N_lambda","N_mulambda","N_intlambda","N_PGR","N_muPGR","B","B_lambda_id","B_mulambda_id","B_intlambda_id","B_lambda","B_mulambda","B_intlambda","B_PGR","B_muPGR","alpha_N","beta_N","alpha_B","beta_B","p.det","p.det_id","alpha_det","beta_det","Nreg","Breg"), tax[mcmc_summary$p1], NA)
   mcmc_summary$paraid <- ifelse(mcmc_summary$parameter %in% c("z","N","B","p.per_id","p.ext_id","p.col_id","N","N_lambda_id","N_mulambda_id","N_intlambda_id","B_lambda_id","B_mulambda_id","B_intlambda_id"), id[mcmc_summary$p2], NA)
   mcmc_summary$paraid <- ifelse(mcmc_summary$parameter %in% c("p.det_id"), id[mcmc_summary$p3], mcmc_summary$paraid)
-  mcmc_summary$paratime <- ifelse(mcmc_summary$parameter %in% c("z","z_intlambda","turnover","z_intlambda_gui","N","N_intlambda_id","N_intlambda","B","B_intlambda_id","B_intlambda","N_intlambda_gui","B_intlambda_gui"), time[mcmc_summary$p3], NA)
+  mcmc_summary$paratime <- ifelse(mcmc_summary$parameter %in% c("z","z_intlambda","turnover","z_intlambda_gui","N","N_intlambda_id","N_intlambda","B","B_intlambda_id","B_intlambda","N_intlambda_gui","B_intlambda_gui","Breg","Nreg"), time[mcmc_summary$p3], NA)
   #-----------------------------------------------------------------------------
   # get region names and subscripts
   sub_reg <- NULL
   if (!is.null(region)) {
-    mcmc_summary$region <- ifelse(mcmc_summary$parameter %in% c("z_mulambda","z_lambda","z_intlambda","turnover","OR","muOR","z_lambda_gui","z_mulambda_gui","z_intlambda_gui","GOR","muGOR","N_lambda_gui","N_intlambda_gui","B_lambda_gui","B_intlambda_gui","N_mulambda_gui","B_mulambda_gui","N_PGR","N_muPGR","N_GGR","N_muGGR","B_PGR","B_muPGR","B_GGR","B_muGGR"), region[mcmc_summary$p2], NA)
+    mcmc_summary$region <- ifelse(mcmc_summary$parameter %in% c("z_mulambda","z_lambda","z_intlambda","turnover","OR","muOR","z_lambda_gui","z_mulambda_gui","z_intlambda_gui","GOR","muGOR","N_lambda_gui","N_intlambda_gui","B_lambda_gui","B_intlambda_gui","N_mulambda_gui","B_mulambda_gui","N_PGR","N_muPGR","N_GGR","N_muGGR","B_PGR","B_muPGR","B_GGR","B_muGGR","Nreg","Breg"), region[mcmc_summary$p2], NA)
     sub_reg <- select(mcmc_summary, region, p2) %>% na.omit() %>% distinct() %>% arrange(p2) %>% set_colnames(c("","subscript")) %>% set_rownames(NULL)
   }
   #-----------------------------------------------------------------------------

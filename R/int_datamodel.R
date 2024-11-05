@@ -155,7 +155,7 @@ int_datamodel <- function(df, occup, grow, modenv, modenvG, alt, RS, timestep, p
       popdyn_inits <- c(popdyn_inits, list(alpha_det = rep(0, ntax), beta_det = matrix(0, ntax, ndet)))
     } else {
       popdyn_parameters <- c(popdyn_parameters, "p.det", "p.det_id")
-      popdyn_inits <- c(popdyn_inits, list(p.det = matrix(1, ntax, npro), epsilon_det = rep(0, length(id)))) 
+      popdyn_inits <- c(popdyn_inits, list(p.det = matrix(1, ntax, npro), epsilon_det = rep(0, length(id))))
     }
   }
   if (isTRUE(occup)) {
@@ -201,7 +201,7 @@ int_datamodel <- function(df, occup, grow, modenv, modenvG, alt, RS, timestep, p
       var <- sapply(nr, function(i) tapply(df[,i], list(df[,quo_name(var_id)],df[,quo_name(var_tmp)]), unique),simplify = "array")
       popdyn_data <- c(popdyn_data,list(var = var))
       popdyn_const <- c(popdyn_const, list(nvar = nvar))
-    } 
+    }
   }
   #-----------------------------------------------------------------------------
   if (isTRUE(grow)) {
@@ -243,8 +243,11 @@ int_datamodel <- function(df, occup, grow, modenv, modenvG, alt, RS, timestep, p
       y <- tapply(df[,quo_name(var_cnt)], list(df[,quo_name(var_tax)],df[,quo_name(var_id)],df[,quo_name(var_tmp)]), unique)
       y <- replace(y, which(y == 0), 1)
       C <- log(replace(y, which(is.na(y)), 1))
+      ymax <- mapply(function(i) 2 * max(pull(df[df[,quo_name(var_tax)] %in% i,], !!var_cnt), na.rm=T), tax, SIMPLIFY = "vector")
+      if (length(ymax) == 1) { ymax <- c(ymax, NA) }
       popdyn_data <- c(popdyn_data, list(y = y))
-      popdyn_parameters <- c(popdyn_parameters, "N_PGR","N_muPGR","N_mulambda","N_lambda","N_intlambda","N_mulambda_id","N_lambda_id","N_intlambda_id","N")
+      popdyn_const <- c(popdyn_const, list(ymax = ymax))
+      popdyn_parameters <- c(popdyn_parameters, "Nreg","N_PGR","N_muPGR","N_mulambda","N_lambda","N_intlambda","N_mulambda_id","N_lambda_id","N_intlambda_id","N")
       if (isTRUE(modenvG)) {
          popdyn_inits <- c(popdyn_inits, list(C = C, alpha_N = rep(0, ntax), beta_N = nimMatrix(1, ntax, ngvar), tauN = nimMatrix(1, ntax, length(id))))
          popdyn_parameters <- c(popdyn_parameters, "alpha_N","beta_N")
@@ -260,8 +263,11 @@ int_datamodel <- function(df, occup, grow, modenv, modenvG, alt, RS, timestep, p
       w <- tapply(df[,quo_name(var_wei)], list(df[,quo_name(var_tax)],df[,quo_name(var_id)],df[,quo_name(var_tmp)]), unique)
       w <- replace(w, which(w == 0), 1)
       W <- log(replace(w, is.na(w), 1))
+      wmax <- mapply(function(i) 2 * max(pull(df[df[,quo_name(var_tax)] %in% i,], !!var_wei), na.rm=T), tax, SIMPLIFY = "vector")
+      if (length(wmax) == 1) { wmax <- c(wmax, NA) }
       popdyn_data <- c(popdyn_data, list(w = w))
-      popdyn_parameters <- c(popdyn_parameters, "B_PGR","B_muPGR","B_mulambda","B_lambda","B_intlambda","B_mulambda_id","B_lambda_id","B_intlambda_id","B")
+      popdyn_const <- c(popdyn_const, list(wmax = wmax))
+      popdyn_parameters <- c(popdyn_parameters, "Breg","B_PGR","B_muPGR","B_mulambda","B_lambda","B_intlambda","B_mulambda_id","B_lambda_id","B_intlambda_id","B")
       if (isTRUE(modenvG)) {
         popdyn_inits <- c(popdyn_inits, list(W = W, alpha_B = rep(0, ntax), beta_B = nimMatrix(1, ntax, ngvar), tauB = nimMatrix(1, ntax, length(id))))
         popdyn_parameters <- c(popdyn_parameters, "alpha_B","beta_B")
